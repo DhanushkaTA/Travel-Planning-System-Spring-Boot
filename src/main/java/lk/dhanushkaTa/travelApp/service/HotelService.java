@@ -10,4 +10,12 @@ public interface HotelService {
     HotelDTO findHotelById(String hotelId);
 
     List<HotelDTO> getHotelList();
+
+    List<HotelDTO> findHotelByNameLike(String hotelName);
+
+   HotelDTO findHotelByName(String hotelName);
+
+   void updateHotelDetails(HotelDTO hotelDTO);
+
+   void deleteHotel(String hotelId);
 }
