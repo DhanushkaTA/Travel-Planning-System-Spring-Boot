@@ -22,13 +22,13 @@ public class UserController {
         return "user controller Ok...";
     }
 
-    @GetMapping(path = "{userId}")
+    @GetMapping(path = "find/{userId}")
     public ResponseUtil findUserById(@PathVariable("userId") String userId){
         UserDTO userById = userService.findUserById(userId);
         return new ResponseUtil("200","User Find",userById);
     }
 
-    @GetMapping(path = "all")
+    @GetMapping(path = "find/all")
     public ResponseUtil getAll(){
         return new ResponseUtil("200","User List",userService.findAll());
     }

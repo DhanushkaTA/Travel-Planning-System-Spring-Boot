@@ -23,12 +23,12 @@ public class HotelController {
         return "Hotel Controller Ok";
     }
 
-    @GetMapping(path = "all")
+    @GetMapping(path = "find/all")
     public ResponseUtil getAllHotels(){
         return new ResponseUtil("200","Hotel List",hotelService.getHotelList());
     }
 
-    @GetMapping(path = "{hotelId}")
+    @GetMapping(path = "find/{hotelId}")
     public ResponseUtil findHotelById(@PathVariable String hotelId){
         return new ResponseUtil("200","Hotel Found",hotelService.findHotelById(hotelId));
     }
