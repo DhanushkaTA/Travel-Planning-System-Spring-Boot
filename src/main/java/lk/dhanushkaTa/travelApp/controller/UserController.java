@@ -1,6 +1,8 @@
 package lk.dhanushkaTa.travelApp.controller;
 
 import lk.dhanushkaTa.travelApp.dto.UserDTO;
+import lk.dhanushkaTa.travelApp.exception.DuplicateException;
+import lk.dhanushkaTa.travelApp.exception.NotFoundException;
 import lk.dhanushkaTa.travelApp.service.UserService;
 import lk.dhanushkaTa.travelApp.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping(path = "find/{userId}")
-    public ResponseUtil findUserById(@PathVariable("userId") String userId){
+    public ResponseUtil findUserById(@PathVariable("userId") String userId) throws NotFoundException {
         UserDTO userById = userService.findUserById(userId);
         return new ResponseUtil("200","User Find",userById);
     }
@@ -44,20 +46,20 @@ public class UserController {
 //    }
 
     @PostMapping(path = "save",produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseUtil saveUser(@RequestBody UserDTO userDto){
+    public ResponseUtil saveUser(@RequestBody UserDTO userDto) throws DuplicateException {
         System.out.println("userDto : "+userDto);
         userService.saveUser(userDto);
         return new ResponseUtil("201","User Saved",null);
     }
 
     @DeleteMapping(path = "delete/{userId}")
-    public ResponseUtil deleteUser(@PathVariable("userId")String userId){
+    public ResponseUtil deleteUser(@PathVariable("userId")String userId) throws NotFoundException {
         userService.deleteUserById(userId);
         return new ResponseUtil("200","User Deleted",null);
     }
 
     @PutMapping
-    public ResponseUtil updateUser(@RequestBody UserDTO userDTO){
+    public ResponseUtil updateUser(@RequestBody UserDTO userDTO) throws NotFoundException {
         userService.updateUser(userDTO);
         return new ResponseUtil("200","User updated",null);
     }

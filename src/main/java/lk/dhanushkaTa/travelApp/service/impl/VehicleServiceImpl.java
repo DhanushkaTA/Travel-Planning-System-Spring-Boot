@@ -2,6 +2,8 @@ package lk.dhanushkaTa.travelApp.service.impl;
 
 import lk.dhanushkaTa.travelApp.dto.VehicleDTO;
 import lk.dhanushkaTa.travelApp.entity.Vehicle;
+import lk.dhanushkaTa.travelApp.exception.DuplicateException;
+import lk.dhanushkaTa.travelApp.exception.NotFoundException;
 import lk.dhanushkaTa.travelApp.repository.VehicleRepository;
 import lk.dhanushkaTa.travelApp.service.VehicleService;
 import lombok.RequiredArgsConstructor;
@@ -68,33 +70,33 @@ public class VehicleServiceImpl implements VehicleService {
     }
 
     @Override
-    public void saveVehicle(VehicleDTO vehicleDTO) {
+    public void saveVehicle(VehicleDTO vehicleDTO) throws DuplicateException {
         if (vehicleRepository.existsById(vehicleDTO.getVehicleId())){
-            throw new RuntimeException("Vehicle number already exits");
+            throw new DuplicateException("Vehicle number already exits");
         }
         vehicleRepository.save(modelMapper.map(vehicleDTO, Vehicle.class));
     }
 
     @Override
-    public void updateVehicle(VehicleDTO vehicleDTO) {
+    public void updateVehicle(VehicleDTO vehicleDTO) throws NotFoundException {
         if (!vehicleRepository.existsById(vehicleDTO.getVehicleId())){
-            throw new RuntimeException("Vehicle number not found");
+            throw new NotFoundException("Vehicle number not found");
         }
         vehicleRepository.save(modelMapper.map(vehicleDTO, Vehicle.class));
     }
 
     @Override
-    public void deleteVehicle(String vehicleId) {
+    public void deleteVehicle(String vehicleId) throws NotFoundException {
         if (!vehicleRepository.existsById(vehicleId)){
-            throw new RuntimeException("Vehicle number not found");
+            throw new NotFoundException("Vehicle number not found");
         }
         vehicleRepository.deleteById(vehicleId);
     }
 
     @Override
-    public void updateVehicleStatus(String vehicleId) {
+    public void updateVehicleStatus(String vehicleId) throws NotFoundException {
         if (!vehicleRepository.existsById(vehicleId)){
-            throw new RuntimeException("Vehicle number not found");
+            throw new NotFoundException("Vehicle number not found");
         }
         Optional<Vehicle> vehicleById = vehicleRepository.findById(vehicleId);
         if (vehicleById.isPresent()){

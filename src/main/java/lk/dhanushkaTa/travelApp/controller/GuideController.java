@@ -1,6 +1,8 @@
 package lk.dhanushkaTa.travelApp.controller;
 
 import lk.dhanushkaTa.travelApp.dto.GuideDTO;
+import lk.dhanushkaTa.travelApp.exception.DuplicateException;
+import lk.dhanushkaTa.travelApp.exception.NotFoundException;
 import lk.dhanushkaTa.travelApp.service.GuideService;
 import lk.dhanushkaTa.travelApp.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
@@ -32,25 +34,25 @@ public class GuideController {
     }
 
     @PostMapping(path = "save")
-    public ResponseUtil saveGuide(@RequestBody GuideDTO guideDTO){
+    public ResponseUtil saveGuide(@RequestBody GuideDTO guideDTO) throws DuplicateException {
         guideService.saveGuide(guideDTO);
         return new ResponseUtil("200","Guide saved",null);
     }
 
     @PutMapping(path = "update")
-    public ResponseUtil updateGuide(@RequestBody GuideDTO guideDTO){
+    public ResponseUtil updateGuide(@RequestBody GuideDTO guideDTO) throws NotFoundException {
         guideService.updateGuide(guideDTO);
         return new ResponseUtil("200","Guide updated",null);
     }
 
     @PutMapping(path = "update/status/{guideId}")
-    public ResponseUtil updateGuideStatus(@PathVariable String guideId){
+    public ResponseUtil updateGuideStatus(@PathVariable String guideId) throws NotFoundException {
         guideService.updateGuideStatus(guideId);
         return new ResponseUtil("200","Update Status",null);
     }
 
     @DeleteMapping(path = "delete/{guideID}")
-    public ResponseUtil deleteGuide(@PathVariable String guideID){
+    public ResponseUtil deleteGuide(@PathVariable String guideID) throws NotFoundException {
         guideService.deleteGuide(guideID);
         return new ResponseUtil("200","Guide deleted",null);
     }

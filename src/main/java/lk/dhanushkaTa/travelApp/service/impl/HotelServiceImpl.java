@@ -2,6 +2,8 @@ package lk.dhanushkaTa.travelApp.service.impl;
 
 import lk.dhanushkaTa.travelApp.dto.HotelDTO;
 import lk.dhanushkaTa.travelApp.entity.Hotel;
+import lk.dhanushkaTa.travelApp.exception.DuplicateException;
+import lk.dhanushkaTa.travelApp.exception.NotFoundException;
 import lk.dhanushkaTa.travelApp.repository.HotelRepository;
 import lk.dhanushkaTa.travelApp.service.HotelService;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +28,9 @@ public class HotelServiceImpl implements HotelService {
     private final ModelMapper modelMapper;
 
     @Override
-    public void saveHotel(HotelDTO hotelDTO) {
+    public void saveHotel(HotelDTO hotelDTO) throws DuplicateException {
         if (hotelRepository.existsById(hotelDTO.getHotelId())){
-            throw new RuntimeException("Hotel Id already exits!");
+            throw new DuplicateException("Hotel Id already exits!");
         }
         hotelRepository.save(modelMapper.map(hotelDTO, Hotel.class));
     }
@@ -62,17 +64,17 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public void updateHotelDetails(HotelDTO hotelDTO) {
+    public void updateHotelDetails(HotelDTO hotelDTO) throws NotFoundException {
         if (!hotelRepository.existsById(hotelDTO.getHotelId())){
-            throw new RuntimeException("Hotel couldn't find");
+            throw new NotFoundException("Hotel couldn't find");
         }
         hotelRepository.save(modelMapper.map(hotelDTO, Hotel.class));
     }
 
     @Override
-    public void deleteHotel(String hotelId) {
+    public void deleteHotel(String hotelId) throws NotFoundException {
         if (!hotelRepository.existsById(hotelId)){
-            throw new RuntimeException("Hotel couldn't find");
+            throw new NotFoundException("Hotel couldn't find");
         }
         hotelRepository.deleteById(hotelId);
     }

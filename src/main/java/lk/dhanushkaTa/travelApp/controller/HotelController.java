@@ -1,6 +1,8 @@
 package lk.dhanushkaTa.travelApp.controller;
 
 import lk.dhanushkaTa.travelApp.dto.HotelDTO;
+import lk.dhanushkaTa.travelApp.exception.DuplicateException;
+import lk.dhanushkaTa.travelApp.exception.NotFoundException;
 import lk.dhanushkaTa.travelApp.service.HotelService;
 import lk.dhanushkaTa.travelApp.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
@@ -44,19 +46,19 @@ public class HotelController {
     }
 
     @PostMapping(path = "save")
-    public ResponseUtil saveHotel(@RequestBody HotelDTO hotelDTO){
+    public ResponseUtil saveHotel(@RequestBody HotelDTO hotelDTO) throws DuplicateException {
         hotelService.saveHotel(hotelDTO);
         return new ResponseUtil("200","Hotel Saved",null);
     }
 
     @PutMapping(path = "update")
-    public ResponseUtil updateHotel(@RequestBody HotelDTO hotelDTO){
+    public ResponseUtil updateHotel(@RequestBody HotelDTO hotelDTO) throws NotFoundException {
         hotelService.updateHotelDetails(hotelDTO);
         return new ResponseUtil("200","Hotel updated",null);
     }
 
     @DeleteMapping(path = "delete/{hotelId}")
-    public ResponseUtil deleteHotel(@PathVariable String hotelId){
+    public ResponseUtil deleteHotel(@PathVariable String hotelId) throws NotFoundException {
         hotelService.deleteHotel(hotelId);
         return new ResponseUtil("200","Hotel Deleted",null);
     }

@@ -2,6 +2,8 @@ package lk.dhanushkaTa.travelApp.service.impl;
 
 import lk.dhanushkaTa.travelApp.dto.GuideDTO;
 import lk.dhanushkaTa.travelApp.entity.Guide;
+import lk.dhanushkaTa.travelApp.exception.DuplicateException;
+import lk.dhanushkaTa.travelApp.exception.NotFoundException;
 import lk.dhanushkaTa.travelApp.repository.GuideRepository;
 import lk.dhanushkaTa.travelApp.service.GuideService;
 import lombok.RequiredArgsConstructor;
@@ -37,33 +39,33 @@ public class GuideServiceImpl implements GuideService {
     }
 
     @Override
-    public void saveGuide(GuideDTO guideDTO) {
+    public void saveGuide(GuideDTO guideDTO) throws DuplicateException {
         if (guideRepository.existsById(guideDTO.getGuideId())){
-            throw new RuntimeException("Customer Already exits");
+            throw new DuplicateException("Customer Already exits");
         }
         guideRepository.save(modelMapper.map(guideDTO, Guide.class));
     }
 
     @Override
-    public void updateGuide(GuideDTO guideDTO) {
+    public void updateGuide(GuideDTO guideDTO) throws NotFoundException {
         if (!guideRepository.existsById(guideDTO.getGuideId())){
-            throw new RuntimeException("Customer couldn't found");
+            throw new NotFoundException("Customer couldn't found");
         }
         guideRepository.save(modelMapper.map(guideDTO, Guide.class));
     }
 
     @Override
-    public void deleteGuide(String guideId) {
+    public void deleteGuide(String guideId) throws NotFoundException {
         if (!guideRepository.existsById(guideId)){
-            throw new RuntimeException("Customer couldn't found");
+            throw new NotFoundException("Customer couldn't found");
         }
         guideRepository.deleteById(guideId);
     }
 
     @Override
-    public void updateGuideStatus(String guideId) {
+    public void updateGuideStatus(String guideId) throws NotFoundException {
         if (!guideRepository.existsById(guideId)){
-            throw new RuntimeException("Customer couldn't found");
+            throw new NotFoundException("Customer couldn't found");
         }
         Optional<Guide> guideById = guideRepository.findById(guideId);
         Guide guide = guideById.get();

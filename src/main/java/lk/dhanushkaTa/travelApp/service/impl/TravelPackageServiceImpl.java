@@ -2,6 +2,8 @@ package lk.dhanushkaTa.travelApp.service.impl;
 
 import lk.dhanushkaTa.travelApp.dto.TravelPackageDTO;
 import lk.dhanushkaTa.travelApp.entity.TravelPackage;
+import lk.dhanushkaTa.travelApp.exception.DuplicateException;
+import lk.dhanushkaTa.travelApp.exception.NotFoundException;
 import lk.dhanushkaTa.travelApp.repository.TravelPackageRepository;
 import lk.dhanushkaTa.travelApp.service.TravelPackageService;
 import lombok.RequiredArgsConstructor;
@@ -26,17 +28,17 @@ public class TravelPackageServiceImpl implements TravelPackageService {
     private final ModelMapper modelMapper;
 
     @Override
-    public void saveTravelPackage(TravelPackageDTO travelPackageDTO) {
+    public void saveTravelPackage(TravelPackageDTO travelPackageDTO) throws DuplicateException {
         if (travelPackageRepository.existsById(travelPackageDTO.getTravelPackage_Id())){
-            throw new RuntimeException("Travel Package Id Already Exits");
+            throw new DuplicateException("Travel Package Id Already Exits");
         }
         travelPackageRepository.save(modelMapper.map(travelPackageDTO, TravelPackage.class));
     }
 
     @Override
-    public void updateTravelPackage(TravelPackageDTO travelPackageDTO) {
+    public void updateTravelPackage(TravelPackageDTO travelPackageDTO) throws NotFoundException {
         if (!travelPackageRepository.existsById(travelPackageDTO.getTravelPackage_Id())){
-            throw new RuntimeException("Travel Package couldn't found");
+            throw new NotFoundException("Travel Package couldn't found");
         }
         travelPackageRepository.save(modelMapper.map(travelPackageDTO, TravelPackage.class));
     }
@@ -53,9 +55,9 @@ public class TravelPackageServiceImpl implements TravelPackageService {
     }
 
     @Override
-    public void deletePackage(String packageId) {
+    public void deletePackage(String packageId) throws NotFoundException {
         if (!travelPackageRepository.existsById(packageId)){
-            throw new RuntimeException("Travel Package couldn't found");
+            throw new NotFoundException("Travel Package couldn't found");
         }
         travelPackageRepository.deleteById(packageId);
     }
