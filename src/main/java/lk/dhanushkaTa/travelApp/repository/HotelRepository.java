@@ -12,5 +12,6 @@ import java.util.Optional;
 public interface HotelRepository extends JpaRepository<Hotel,String> {
 
     List<Hotel> findByHotelNameIsLikeIgnoreCaseOrderByHotelCategoryAsc(String hotelName);
+    List<Hotel> findByHotelNameStartingWithOrderByHotelCategoryAsc(String hotelName);
     Hotel findByHotelName(String hotelName);
 }
