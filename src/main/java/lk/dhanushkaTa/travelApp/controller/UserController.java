@@ -1,5 +1,7 @@
 package lk.dhanushkaTa.travelApp.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.dhanushkaTa.travelApp.dto.UserDTO;
 import lk.dhanushkaTa.travelApp.entity.Image;
 import lk.dhanushkaTa.travelApp.exception.DuplicateException;
@@ -25,6 +27,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/user")
@@ -35,6 +38,8 @@ public class UserController {
     @Autowired
     public final UserService userService;
 
+    public final ObjectMapper objectMapper;
+
     @GetMapping()
     public String getTest(){
         return "user controller Ok...";
@@ -43,11 +48,26 @@ public class UserController {
     @GetMapping(path = "find/{userId}")
     public ResponseUtil findUserById(@PathVariable("userId") String userId) throws NotFoundException {
         UserDTO userById = userService.findUserById(userId);
+
+//        HttpHeaders headers=new HttpHeaders();
+//        headers.setContentType(MediaType.IMAGE_PNG);
+//        return new ResponseEntity<>(userById.getProfileImage(),headers, HttpStatus.OK);
+
         return new ResponseUtil("200","User Find",userById);
     }
 
     @GetMapping(path = "find/all")
     public ResponseUtil getAll(){
+
+//        List<UserDTO> all = userService.findAll();
+//        HttpHeaders headers=new HttpHeaders();
+//        headers.setContentType(MediaType.IMAGE_PNG);
+//        return new ResponseEntity<>(all.get(1).getNicImage1(),headers, HttpStatus.OK);
+        List<UserDTO> all = userService.findAll();
+        for (UserDTO userDTO : all){
+            System.out.println(userDTO.getUserId()+" : "+userDTO.getUserNic());
+        }
+
         return new ResponseUtil("200","User List",userService.findAll());
     }
 
@@ -61,10 +81,17 @@ public class UserController {
 //        return new ResponseUtil("200","User found",userService.findUserByIdOrNicLike(detail));
 //    }
 
-    @PostMapping(path = "save",produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseUtil saveUser(@RequestBody UserDTO userDto) throws DuplicateException {
-        System.out.println("userDto : "+userDto);
-        userService.saveUser(userDto);
+    @PostMapping(path = "save",
+            produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseUtil saveUser(@RequestParam String user,
+                                 @RequestParam MultipartFile nic1,
+                                 @RequestParam MultipartFile nic2,
+                                 @RequestParam MultipartFile pic) throws DuplicateException, JsonProcessingException {
+        System.out.println("userDto : "+user);
+
+        UserDTO userDTO = objectMapper.readValue(user, UserDTO.class);
+        System.out.println(userDTO);
+        userService.saveUser(userDTO,nic1,nic2,pic);
         return new ResponseUtil("201","User Saved",null);
     }
 
@@ -74,9 +101,18 @@ public class UserController {
         return new ResponseUtil("200","User Deleted",null);
     }
 
-    @PutMapping(path = "update")
-    public ResponseUtil updateUser(@RequestBody UserDTO userDTO) throws NotFoundException {
-        userService.updateUser(userDTO);
+
+    @PutMapping(path = "update",
+            produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseUtil updateUser(@RequestParam String user,
+                                   @RequestParam MultipartFile nic1,
+                                   @RequestParam MultipartFile nic2,
+                                   @RequestParam MultipartFile pic) throws NotFoundException, JsonProcessingException {
+        System.out.println("userDto : "+user);
+
+        UserDTO userDTO = objectMapper.readValue(user, UserDTO.class);
+        System.out.println(userDTO);
+        userService.updateUser(userDTO,nic1,nic2,pic);
         return new ResponseUtil("200","User updated",null);
     }
 

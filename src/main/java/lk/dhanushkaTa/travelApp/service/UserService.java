@@ -3,11 +3,12 @@ package lk.dhanushkaTa.travelApp.service;
 import lk.dhanushkaTa.travelApp.dto.UserDTO;
 import lk.dhanushkaTa.travelApp.exception.DuplicateException;
 import lk.dhanushkaTa.travelApp.exception.NotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface UserService {
-    boolean saveUser(UserDTO userDTO) throws DuplicateException;
+    boolean saveUser(UserDTO userDTO, MultipartFile nic1,MultipartFile nic2,MultipartFile pic) throws DuplicateException;
 
     UserDTO findUserById(String userId) throws NotFoundException;
 
@@ -19,5 +20,5 @@ public interface UserService {
 
     List<UserDTO> findUserByIdOrNicLike(String detail);
 
-    void updateUser(UserDTO userDTO) throws NotFoundException;
+    void updateUser(UserDTO userDTO,MultipartFile nic1,MultipartFile nic2,MultipartFile pic) throws NotFoundException;
 }
