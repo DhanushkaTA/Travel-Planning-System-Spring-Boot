@@ -38,6 +38,7 @@ public class UserController {
     @Autowired
     public final UserService userService;
 
+    @Autowired
     public final ObjectMapper objectMapper;
 
     @GetMapping()

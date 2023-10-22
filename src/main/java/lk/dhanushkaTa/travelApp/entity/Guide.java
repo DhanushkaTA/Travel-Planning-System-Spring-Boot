@@ -46,7 +46,13 @@ public class Guide {
 
     @Column(nullable = false)
     private String guideStatus;
-//    private guideIDImage;
-//    private guideNICImage;
-//    private guideImage;
+
+    @Column(nullable = false)
+    private String guideIDImage;
+
+    @Column(nullable = false)
+    private String guideNICImage;
+
+    @Column(nullable = false)
+    private String guideImage;
 }

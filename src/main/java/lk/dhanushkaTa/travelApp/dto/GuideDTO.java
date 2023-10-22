@@ -20,7 +20,7 @@ public class GuideDTO {
     private String guideEmail;
     private String guideGender;
     private String guideStatus;
-//    private guideIDImage;
-//    private guideNICImage;
-//    private guideImage;
+    private byte[] guideIDImage;
+    private byte[] guideNICImage;
+    private byte[] guideImage;
 }
