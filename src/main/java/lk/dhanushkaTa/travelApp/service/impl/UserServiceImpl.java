@@ -66,13 +66,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO findUserByIdOrNic(String detail) {
-        User user= userRepository.findUserByUserIdOrUserNic(detail, detail);
+        User user= userRepository.findUserByUserIdOrUserIdNum(detail, detail);
         return modelMapper.map(user, UserDTO.class);
     }
 
     @Override
     public List<UserDTO> findUserByIdOrNicLike(String detail) {
-        return modelMapper.map(userRepository.findUserByUserIdLikeOrUserNicLike(detail,detail),
+        return modelMapper.map(userRepository.findUserByUserIdLikeOrUserIdNumLike(detail,detail),
                 new TypeToken<List<UserDTO>>(){}.getType());
     }
 
@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
         files.add(pic);
 
         try {
-            String uploadPathDer="E:\\IJSE\\AAD\\image\\"+user.getUserId();
+            String uploadPathDer="E:\\IJSE\\AAD\\image\\user\\"+user.getUserId();
             Path uploadPath = Paths.get(uploadPathDer);
             if (!Files.exists(uploadPath)){
                 Files.createDirectories(uploadPath);

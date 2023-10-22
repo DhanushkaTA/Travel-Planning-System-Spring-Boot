@@ -65,7 +65,7 @@ public class UserController {
 //        return new ResponseEntity<>(all.get(1).getNicImage1(),headers, HttpStatus.OK);
         List<UserDTO> all = userService.findAll();
         for (UserDTO userDTO : all){
-            System.out.println(userDTO.getUserId()+" : "+userDTO.getUserNic());
+            System.out.println(userDTO.getUserId()+" : "+userDTO.getUserIdNum());
         }
 
         return new ResponseUtil("200","User List",userService.findAll());

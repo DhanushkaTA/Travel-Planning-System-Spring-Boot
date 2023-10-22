@@ -1,13 +1,18 @@
 package lk.dhanushkaTa.travelApp.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lk.dhanushkaTa.travelApp.dto.HotelDTO;
 import lk.dhanushkaTa.travelApp.exception.DuplicateException;
 import lk.dhanushkaTa.travelApp.exception.NotFoundException;
+import lk.dhanushkaTa.travelApp.exception.ProcessingException;
 import lk.dhanushkaTa.travelApp.service.HotelService;
 import lk.dhanushkaTa.travelApp.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,6 +25,9 @@ public class HotelController {
     @Autowired
     private final HotelService hotelService;
 
+    @Autowired
+    private final ObjectMapper objectMapper;
+
     @GetMapping
     public String ping(){
         return "Hotel Controller Ok";
@@ -30,12 +38,18 @@ public class HotelController {
         return new ResponseUtil("200","Hotel List",hotelService.getHotelList());
     }
 
+//    @GetMapping(path = "find/{hotelId}")
+//    public ResponseUtil findHotelById(@PathVariable String hotelId){
+//        return new ResponseUtil("200","Hotel Found",hotelService.findHotelById(hotelId));
+//    }
+
     @GetMapping(path = "find/{hotelId}")
     public ResponseUtil findHotelById(@PathVariable String hotelId){
+        System.out.println(hotelService.findHotelById(hotelId));
         return new ResponseUtil("200","Hotel Found",hotelService.findHotelById(hotelId));
     }
 
-    @GetMapping(path = "find/{name}")
+    @GetMapping(path = "find/name/{name}")
     public ResponseUtil findHotelByName(@PathVariable String name){
         return new ResponseUtil("200","Hotel found",hotelService.findHotelByName(name));
     }
@@ -45,15 +59,35 @@ public class HotelController {
         return new ResponseUtil("200","Hotel found",hotelService.findHotelByNameLike(name));
     }
 
-    @PostMapping(path = "save")
-    public ResponseUtil saveHotel(@RequestBody HotelDTO hotelDTO) throws DuplicateException {
-        hotelService.saveHotel(hotelDTO);
+//    @PostMapping(path = "save")
+//    public ResponseUtil saveHotel(@RequestBody HotelDTO hotelDTO) throws DuplicateException {
+//        hotelService.saveHotel(hotelDTO);
+//        return new ResponseUtil("200","Hotel Saved",null);
+//    }
+
+    @PostMapping(path = "save",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseUtil saveHotel(@RequestParam String hotel,
+                                  MultipartFile pic) throws DuplicateException, ProcessingException {
+        HotelDTO hotelDTO = null;
+        try {
+            hotelDTO = objectMapper.readValue(hotel, HotelDTO.class);
+        } catch (JsonProcessingException e) {
+            throw new ProcessingException(e.getMessage(),e);
+        }
+        hotelService.saveHotel(hotelDTO,pic);
         return new ResponseUtil("200","Hotel Saved",null);
     }
 
-    @PutMapping(path = "update")
-    public ResponseUtil updateHotel(@RequestBody HotelDTO hotelDTO) throws NotFoundException {
-        hotelService.updateHotelDetails(hotelDTO);
+    @PutMapping(path = "update",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseUtil updateHotel(@RequestParam String hotel,
+                                    @RequestParam MultipartFile pic) throws NotFoundException, ProcessingException {
+        HotelDTO hotelDTO = null;
+        try {
+            hotelDTO = objectMapper.readValue(hotel, HotelDTO.class);
+        } catch (JsonProcessingException e) {
+            throw new ProcessingException(e.getMessage(),e);
+        }
+        hotelService.updateHotelDetails(hotelDTO,pic);
         return new ResponseUtil("200","Hotel updated",null);
     }
 

@@ -3,11 +3,12 @@ package lk.dhanushkaTa.travelApp.service;
 import lk.dhanushkaTa.travelApp.dto.HotelDTO;
 import lk.dhanushkaTa.travelApp.exception.DuplicateException;
 import lk.dhanushkaTa.travelApp.exception.NotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface HotelService {
-    void saveHotel(HotelDTO hotelDTO) throws DuplicateException;
+    void saveHotel(HotelDTO hotelDTO, MultipartFile pic) throws DuplicateException;
 
     HotelDTO findHotelById(String hotelId);
 
@@ -17,7 +18,7 @@ public interface HotelService {
 
    HotelDTO findHotelByName(String hotelName);
 
-   void updateHotelDetails(HotelDTO hotelDTO) throws NotFoundException;
+   void updateHotelDetails(HotelDTO hotelDTO,MultipartFile pic) throws NotFoundException;
 
    void deleteHotel(String hotelId) throws NotFoundException;
 }

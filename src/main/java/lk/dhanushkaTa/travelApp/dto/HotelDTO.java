@@ -22,5 +22,6 @@ public class HotelDTO {
     private String hotelPetAllow;
     private String hotelCancellationCriteria;
     private RoomOption hotelRoomOpt;
+    private byte[] hotelImage;
 
 }

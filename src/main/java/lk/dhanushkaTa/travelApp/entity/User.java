@@ -26,11 +26,17 @@ public class User {
     @Column(nullable = false)
     private String userPassword;
     @Column(nullable = false,unique = true)
-    private String userNic;
-    @Column()
+    private String userIdNum;
+    @Column(nullable = false)
+    private String userIdType;
+    @Column(nullable = false)
     private String userEmail;
     @Column(nullable = false)
     private String userAddress;
+    @Column(nullable = false)
+    private String userDob;
+    @Column(nullable = false)
+    private String userGender;
     @Column(columnDefinition = "TEXT")
     private String nicImage1;
     @Column(columnDefinition = "TEXT")

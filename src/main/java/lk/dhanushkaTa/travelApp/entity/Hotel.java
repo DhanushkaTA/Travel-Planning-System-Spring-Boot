@@ -49,4 +49,7 @@ public class Hotel {
     @Column(nullable = false)
     private RoomOption hotelRoomOpt;
 
+    @Column(columnDefinition = "TEXT")
+    private String hotelImage;
+
 }

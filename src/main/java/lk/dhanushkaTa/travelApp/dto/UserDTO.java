@@ -14,9 +14,12 @@ public class UserDTO {
     private String userFullName;
     private String username;
     private String userPassword;
-    private String userNic;
+    private String userIdNum;
+    private String userIdType;
     private String userEmail;
     private String userAddress;
+    private String userDob;
+    private String userGender;
     private byte[] nicImage1;
     private byte[] nicImage2;
     private byte[] profileImage;
