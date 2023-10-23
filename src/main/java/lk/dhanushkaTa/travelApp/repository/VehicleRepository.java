@@ -17,4 +17,9 @@ public interface VehicleRepository extends JpaRepository<Vehicle,String> {
     List<Vehicle> findByVehicleTransmissionTypeOrderByVehicleSeatCapacityDesc(String transmissionType);
 
     List<Vehicle> findByVehicleTransmissionTypeOrderByVehicleIdAsc(String transmissionType);
+
+    List<Vehicle> findByVehicleFuelTypeIsLike(String fuelType);
+
+    List<Vehicle> findByVehicleFuelTypeAndVehicleTransmissionTypeOrderByVehicleBrand(
+            String fuelType,String transmissionType);
 }

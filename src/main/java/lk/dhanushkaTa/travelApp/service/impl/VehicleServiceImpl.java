@@ -1,21 +1,32 @@
 package lk.dhanushkaTa.travelApp.service.impl;
 
+import lk.dhanushkaTa.travelApp.dto.UserDTO;
 import lk.dhanushkaTa.travelApp.dto.VehicleDTO;
+import lk.dhanushkaTa.travelApp.entity.User;
 import lk.dhanushkaTa.travelApp.entity.Vehicle;
 import lk.dhanushkaTa.travelApp.exception.DuplicateException;
 import lk.dhanushkaTa.travelApp.exception.NotFoundException;
 import lk.dhanushkaTa.travelApp.repository.VehicleRepository;
 import lk.dhanushkaTa.travelApp.service.VehicleService;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -38,12 +49,15 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public VehicleDTO findVehicleById(String vehicleId) {
         Optional<Vehicle> vehicle = vehicleRepository.findById(vehicleId);
-        return vehicle.map(value -> modelMapper.map(value, VehicleDTO.class)).orElse(null);
+//        return vehicle.map(value -> modelMapper.map(value, VehicleDTO.class)).orElse(null);
+        return vehicle.map(this::convertPathToByte).orElse(null);
     }
 
     @Override
     public List<VehicleDTO> getAllVehicle() {
-        return modelMapper.map(vehicleRepository.findAll(),new TypeToken<List<VehicleDTO>>(){}.getType());
+//        return modelMapper.map(vehicleRepository.findAll(),new TypeToken<List<VehicleDTO>>(){}.getType());
+        return vehicleRepository.findAll().
+                stream().map(this::convertPathToByte).collect(Collectors.toList());
     }
 
     @Override
@@ -60,29 +74,44 @@ public class VehicleServiceImpl implements VehicleService {
 
         if (properties.equalsIgnoreCase("transmissionType")){
             this.transmissionType=type;
-            return modelMapper.map(vehicleRepository
-                    .findByVehicleTransmissionTypeOrderByVehicleIdAsc(this.transmissionType),
-                    new TypeToken<List<VehicleDTO>>(){}.getType());
+
+            return vehicleRepository.
+                    findByVehicleTransmissionTypeOrderByVehicleIdAsc(this.transmissionType).
+                    stream().map(this::convertPathToByte).collect(Collectors.toList());
         }
 
-        return modelMapper.map(vehicleRepository
-                .findAll(Sort.by(this.direction,this.properties)),new TypeToken<List<VehicleDTO>>(){}.getType());
+        return vehicleRepository.findAll(Sort.by(this.direction,this.properties)).
+                stream().map(this::convertPathToByte).collect(Collectors.toList());
+
     }
 
+    /**
+     * Images order ->
+     * 1)DriverLicense
+     * 2)frontImage
+     * 3)rearImage
+     * 4)sideImage
+     * 5)frontInteriorImage
+     * 6)rearInteriorImage
+     * */
+
     @Override
-    public void saveVehicle(VehicleDTO vehicleDTO) throws DuplicateException {
+    public void saveVehicle(VehicleDTO vehicleDTO, MultipartFile[] images) throws DuplicateException {
         if (vehicleRepository.existsById(vehicleDTO.getVehicleId())){
             throw new DuplicateException("Vehicle number already exits");
         }
-        vehicleRepository.save(modelMapper.map(vehicleDTO, Vehicle.class));
+//        vehicleRepository.save(modelMapper.map(vehicleDTO, Vehicle.class));
+//        Vehicle vehicle = this.handleFile(images, modelMapper.map(vehicleDTO, Vehicle.class));
+        vehicleRepository.save(this.handleFile(images, modelMapper.map(vehicleDTO, Vehicle.class)));
     }
 
     @Override
-    public void updateVehicle(VehicleDTO vehicleDTO) throws NotFoundException {
+    public void updateVehicle(VehicleDTO vehicleDTO,MultipartFile[] images) throws NotFoundException {
         if (!vehicleRepository.existsById(vehicleDTO.getVehicleId())){
             throw new NotFoundException("Vehicle number not found");
         }
-        vehicleRepository.save(modelMapper.map(vehicleDTO, Vehicle.class));
+//        Vehicle vehicle = this.handleFile(images, modelMapper.map(vehicleDTO, Vehicle.class));
+        vehicleRepository.save(this.handleFile(images, modelMapper.map(vehicleDTO, Vehicle.class)));
     }
 
     @Override
@@ -108,5 +137,60 @@ public class VehicleServiceImpl implements VehicleService {
             }
             vehicleRepository.save(vehicle);
         }
+    }
+
+    private Vehicle handleFile(MultipartFile[] images, Vehicle vehicle) {
+
+        List<String>paths=new ArrayList<>();
+        System.out.println("image length : "+images.length);
+
+
+        try {
+            String uploadPathDer="E:\\IJSE\\AAD\\image\\vehicle\\"+vehicle.getVehicleId();
+            Path uploadPath = Paths.get(uploadPathDer);
+            if (!Files.exists(uploadPath)){
+                Files.createDirectories(uploadPath);
+            }else {
+                FileUtils.deleteDirectory(new File(uploadPathDer));
+                Files.createDirectories(uploadPath);
+            }
+
+            for (int i=0;i<images.length;i++){
+                byte[] bytes = images[i].getBytes();
+                Path path = Paths.get(uploadPath +"\\"+ images[i].getOriginalFilename());
+                Files.write(path,bytes);
+                paths.add(path.toString());
+            }
+
+            vehicle.setVehicleDriverLicense(paths.get(0));
+            vehicle.setFrontImage(paths.get(1));
+            vehicle.setRearImage(paths.get(2));
+            vehicle.setSideImage(paths.get(3));
+            vehicle.setFrontInteriorImage(paths.get(4));
+            vehicle.setRearInteriorImage(paths.get(5));
+
+            System.out.println(" \n Vehicle : "+vehicle);
+        }catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return vehicle;
+    }
+
+    private VehicleDTO convertPathToByte(Vehicle vehicle) {
+
+        VehicleDTO vehicleDTO = modelMapper.map(vehicle, VehicleDTO.class);
+        try {
+            vehicleDTO.setVehicleDriverLicense(
+                    Files.readAllBytes(Paths.get(vehicle.getVehicleDriverLicense()).toFile().toPath()));
+            vehicleDTO.setFrontImage(Files.readAllBytes(Paths.get(vehicle.getFrontImage()).toFile().toPath()));
+            vehicleDTO.setRearImage(Files.readAllBytes(Paths.get(vehicle.getRearImage()).toFile().toPath()));
+            vehicleDTO.setSideImage(Files.readAllBytes(Paths.get(vehicle.getSideImage()).toFile().toPath()));
+            vehicleDTO.setFrontInteriorImage(Files.readAllBytes(Paths.get(vehicle.getFrontInteriorImage()).toFile().toPath()));
+            vehicleDTO.setRearInteriorImage(
+                    Files.readAllBytes(Paths.get(vehicle.getRearInteriorImage()).toFile().toPath()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return vehicleDTO;
     }
 }
