@@ -81,4 +81,21 @@ public class VehicleController {
         vehicleService.deleteVehicle(vehicleId);
         return new ResponseUtil("200","Vehicle deleted",null);
     }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+    @GetMapping(path = "sort/filter/{direction}/{properties}/{key}")
+    public ResponseUtil getVehicleByProperties(@PathVariable String direction,
+                                               @PathVariable String properties,
+                                               @PathVariable String key){
+        return new ResponseUtil("200","list",
+                vehicleService.getFilteredVehicleList(direction,properties,key));
+    }
+
+    @GetMapping(path = "sort/filter/searchType/{direction}/{key}")
+    public ResponseUtil getVehicleListBySearchType(@PathVariable String direction,
+                                                   @PathVariable String key){
+        return new ResponseUtil("200","list",
+                vehicleService.getVehicleListBySearchType(key,direction));
+    }
 }

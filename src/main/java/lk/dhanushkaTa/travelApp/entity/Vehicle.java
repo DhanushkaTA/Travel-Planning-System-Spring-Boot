@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Data
 @ToString
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Entity
 @Table(name = "vehicle")
 public class Vehicle {

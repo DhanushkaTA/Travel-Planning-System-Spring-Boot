@@ -6,7 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @Data
 @ToString
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class VehicleDTO {
 
     private String vehicleId;

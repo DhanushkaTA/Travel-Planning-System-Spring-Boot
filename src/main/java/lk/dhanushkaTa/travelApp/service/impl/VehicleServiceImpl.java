@@ -13,6 +13,8 @@ import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,6 +86,55 @@ public class VehicleServiceImpl implements VehicleService {
                 stream().map(this::convertPathToByte).collect(Collectors.toList());
 
     }
+
+    ///////////////////////////////////////// NEW /////////////////////////////////////////////////////////////////
+    public List<VehicleDTO> getFilteredVehicleList(String direction, String properties,String key){
+        this.direction = direction.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        PageRequest pageRequest = PageRequest.
+                of(0,10,Sort.by(this.direction,"vehicleSeatCapacity"));
+//        PageRequest pageRequest = PageRequest.of(0,10,Sort.by(Sort.Direction.ASC,properties));
+
+        if (properties.equalsIgnoreCase("fuel")){
+            Page<Vehicle> list = vehicleRepository.findByVehicleFuelTypeIsLike(key, pageRequest);
+            List<VehicleDTO> collect = list.stream().map(this::convertPathToByte).collect(Collectors.toList());
+            for (VehicleDTO v:
+                    collect) {
+                System.out.println(v.getVehicleId()+" : "+v.getVehicleSeatCapacity()+" : "+v.getVehicleSearchType());
+            }
+
+            return collect;
+        }else {
+            List<Vehicle> list = vehicleRepository.findByVehicleTransmissionTypeIsLike(key, pageRequest);
+            List<VehicleDTO> collect = list.stream().map(this::convertPathToByte).collect(Collectors.toList());
+            for (VehicleDTO v:
+                    collect) {
+                System.out.println(v.getVehicleId()+" : "+v.getVehicleSeatCapacity()+" : "+v.getVehicleSearchType());
+            }
+
+            return collect;
+        }
+    }
+
+
+    public List<VehicleDTO> getVehicleListBySearchType(String key,String direction ){
+        this.direction = direction.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+        PageRequest pageRequest = PageRequest.
+                of(0,10,Sort.by(this.direction,"vehicleSeatCapacity"));
+
+        List<Vehicle> list = vehicleRepository.findByVehicleSearchTypeIsLike(key, pageRequest);
+        List<VehicleDTO> collect = list.stream().map(this::convertPathToByte).collect(Collectors.toList());
+        for (VehicleDTO v:
+                collect) {
+            System.out.println(v.getVehicleId()+" : "+v.getVehicleSeatCapacity()+" : "+v.getVehicleSearchType());
+        }
+
+        return collect;
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Images order ->

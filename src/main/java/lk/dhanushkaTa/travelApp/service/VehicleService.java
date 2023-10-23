@@ -23,4 +23,11 @@ public interface VehicleService {
     void deleteVehicle(String vehicleId) throws NotFoundException;
 
     void updateVehicleStatus(String vehicleId) throws NotFoundException;
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////
+
+    List<VehicleDTO> getFilteredVehicleList(String direction, String properties,String key);
+
+    public List<VehicleDTO> getVehicleListBySearchType(String key,String direction );
 }
