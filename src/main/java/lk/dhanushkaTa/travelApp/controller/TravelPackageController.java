@@ -24,8 +24,8 @@ public class TravelPackageController {
         return "TravelPackage Controller Ok..";
     }
 
-    @GetMapping(path = "find/{packageId}")
-    public ResponseUtil findPackageById(@PathVariable String packageId){
+    @GetMapping(path = "find",params = {"packageId"})//find?packageId=T/2023/10@001
+    public ResponseUtil findPackageById(String packageId){
         return new ResponseUtil("200","Package found",travelPackageService.findPackageById(packageId));
     }
 
@@ -46,9 +46,14 @@ public class TravelPackageController {
         return new ResponseUtil("200","Package updated",null);
     }
 
-    @DeleteMapping(path = "delete/{packageId}")
-    public ResponseUtil deletePackage(@PathVariable String packageId) throws NotFoundException {
+    @DeleteMapping(path = "delete", params = {"packageId"})
+    public ResponseUtil deletePackage(String packageId) throws NotFoundException {
         travelPackageService.deletePackage(packageId);
         return new ResponseUtil("200","Package Deleted",null);
+    }
+
+    @GetMapping(path = "get/id")
+    public ResponseUtil getNextPackageId(){
+        return new ResponseUtil("200","Next Package Id",travelPackageService.getNextId());
     }
 }

@@ -21,4 +21,6 @@ public interface HotelService {
    void updateHotelDetails(HotelDTO hotelDTO,MultipartFile pic) throws NotFoundException;
 
    void deleteHotel(String hotelId) throws NotFoundException;
+
+    String getNextId();
 }

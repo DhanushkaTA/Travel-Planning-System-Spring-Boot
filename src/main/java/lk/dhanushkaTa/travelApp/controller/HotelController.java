@@ -43,8 +43,8 @@ public class HotelController {
 //        return new ResponseUtil("200","Hotel Found",hotelService.findHotelById(hotelId));
 //    }
 
-    @GetMapping(path = "find/{hotelId}")
-    public ResponseUtil findHotelById(@PathVariable String hotelId){
+    @GetMapping(path = "find",params = {"hotelId"})//find?hotelId=H/2023/10@001
+    public ResponseUtil findHotelById(String hotelId){
         System.out.println(hotelService.findHotelById(hotelId));
         return new ResponseUtil("200","Hotel Found",hotelService.findHotelById(hotelId));
     }
@@ -91,10 +91,15 @@ public class HotelController {
         return new ResponseUtil("200","Hotel updated",null);
     }
 
-    @DeleteMapping(path = "delete/{hotelId}")
-    public ResponseUtil deleteHotel(@PathVariable String hotelId) throws NotFoundException {
+    @DeleteMapping(path = "delete",params = {"hotelId"})////delete?hotelId=H/2023/10@001
+    public ResponseUtil deleteHotel(String hotelId) throws NotFoundException {
         hotelService.deleteHotel(hotelId);
         return new ResponseUtil("200","Hotel Deleted",null);
+    }
+
+    @GetMapping(path = "get/id")
+    public ResponseUtil getNextHotelId(){
+        return new ResponseUtil("200","Next Hotel Id",hotelService.getNextId());
     }
 
 }

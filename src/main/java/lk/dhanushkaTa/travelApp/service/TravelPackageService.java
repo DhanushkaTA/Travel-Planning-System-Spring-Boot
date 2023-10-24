@@ -18,4 +18,6 @@ public interface TravelPackageService {
 
     void deletePackage(String packageId) throws NotFoundException;
 
+    String getNextId();
+
 }

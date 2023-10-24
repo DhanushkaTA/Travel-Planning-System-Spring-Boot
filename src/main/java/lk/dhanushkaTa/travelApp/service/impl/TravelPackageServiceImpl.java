@@ -1,6 +1,7 @@
 package lk.dhanushkaTa.travelApp.service.impl;
 
 import lk.dhanushkaTa.travelApp.dto.TravelPackageDTO;
+import lk.dhanushkaTa.travelApp.entity.Hotel;
 import lk.dhanushkaTa.travelApp.entity.TravelPackage;
 import lk.dhanushkaTa.travelApp.exception.DuplicateException;
 import lk.dhanushkaTa.travelApp.exception.NotFoundException;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,5 +63,49 @@ public class TravelPackageServiceImpl implements TravelPackageService {
             throw new NotFoundException("Travel Package couldn't found");
         }
         travelPackageRepository.deleteById(packageId);
+    }
+
+    public String getNextId(){
+
+        List<TravelPackage> packageList = travelPackageRepository.getLastPackageId();
+        String lastPackageId="";
+        if (!packageList.isEmpty()){
+            System.out.println(packageList.get(0).getTravelPackage_Id());
+            lastPackageId=packageList.get(0).getTravelPackage_Id();
+        }
+
+        return this.generateNextPackagelId(lastPackageId);
+    }
+
+    private String generateNextPackagelId(String lastPackageId) {
+        String date="";
+        String newDate="";
+        date=new SimpleDateFormat("yyyy/MM").format(new Date());
+        newDate="T/"+date;//G/2020/10@0001
+
+        if(!(lastPackageId.equals(""))) {
+            String[] ids = lastPackageId.split("@");
+            int id = Integer.parseInt(ids[1]);
+            id += 1;
+
+
+            boolean isEquals=isDateEquals(ids[0],newDate);
+            if(!isEquals){
+                ids[0]=newDate;
+                id=1;
+            }
+
+            String newLoginId=String.format("@%03d",id);
+            return ids[0] + newLoginId;
+        }
+
+        return newDate+"@0001";
+    }
+
+    private boolean isDateEquals(String id, String date) {
+        if(id.equals(date)){
+            return true;
+        }
+        return false;
     }
 }

@@ -1,6 +1,7 @@
 package lk.dhanushkaTa.travelApp.service.impl;
 
 import lk.dhanushkaTa.travelApp.dto.HotelDTO;
+import lk.dhanushkaTa.travelApp.entity.Guide;
 import lk.dhanushkaTa.travelApp.entity.Hotel;
 import lk.dhanushkaTa.travelApp.exception.DuplicateException;
 import lk.dhanushkaTa.travelApp.exception.NotFoundException;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -137,6 +140,51 @@ public class HotelServiceImpl implements HotelService {
             throw new RuntimeException(e);
         }
         return hotel;
+    }
+
+    public String getNextId(){
+
+        List<Hotel> hotelList = hotelRepository.getLastHotelId();
+        String lastHotelId="";
+        if (!hotelList.isEmpty()){
+            System.out.println(hotelList.get(0).getHotelId());
+            lastHotelId=hotelList.get(0).getHotelId();
+        }
+
+        return this.generateNextHotelId(lastHotelId);
+    }
+
+
+    private String generateNextHotelId(String lastHotelId) {
+        String date="";
+        String newDate="";
+        date=new SimpleDateFormat("yyyy/MM").format(new Date());
+        newDate="H/"+date;//G/2020/10@0001
+
+        if(!(lastHotelId.equals(""))) {
+            String[] ids = lastHotelId.split("@");
+            int id = Integer.parseInt(ids[1]);
+            id += 1;
+
+
+            boolean isEquals=isDateEquals(ids[0],newDate);
+            if(!isEquals){
+                ids[0]=newDate;
+                id=1;
+            }
+
+            String newLoginId=String.format("@%03d",id);
+            return ids[0] + newLoginId;
+        }
+
+        return newDate+"@0001";
+    }
+
+    private boolean isDateEquals(String id, String date) {
+        if(id.equals(date)){
+            return true;
+        }
+        return false;
     }
 
 
